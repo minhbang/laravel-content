@@ -16,7 +16,7 @@ class ContentFrontendController extends Controller
      */
     public function show($slug)
     {
-        if (is_null($content = Content::findBySlug('slug', $slug))) {
+        if (is_null($content = Content::findBy('slug', $slug))) {
             abort(404, trans('content::common.not_found'));
         }
 
