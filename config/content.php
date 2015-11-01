@@ -11,4 +11,9 @@ return [
         'frontend' => null,
         'backend'  => 'admin',
     ],
+    'guarded_item'     => [
+        'contact-us'       => 'Liên hệ',
+        'terms-conditions' => 'Điều khoản & Điều kiện',
+        'order-success'    => 'Đặt hàng thành công',
+    ],
 ];

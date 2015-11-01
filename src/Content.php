@@ -48,7 +48,7 @@ use Minhbang\LaravelUser\Support\UserQuery;
  * @method static \Illuminate\Database\Query\Builder|\Minhbang\LaravelContent\Content searchWhere($column, $operator = '=', $fn = null)
  * @method static \Illuminate\Database\Query\Builder|\Minhbang\LaravelContent\Content searchWhereIn($column, $fn)
  * @method static \Illuminate\Database\Query\Builder|\Minhbang\LaravelContent\Content searchWhereBetween($column, $fn = null)
- * @method static \Illuminate\Database\Query\Builder|\Minhbang\LaravelContent\Content searchWhereInDependent($column, $column_dependent, $fn, $empty = array())
+ * @method static \Illuminate\Database\Query\Builder|\Minhbang\LaravelContent\Content searchWhereInDependent($column, $column_dependent, $fn, $empty = [])
  */
 class Content extends Model
 {
@@ -59,7 +59,15 @@ class Content extends Model
     use PresentableTrait;
     protected $table = 'contents';
     protected $presenter = 'Minhbang\LaravelContent\ContentPresenter';
-    protected $fillable = ['title', 'slug', 'body'];
+    protected $fillable = ['title', 'slug', 'body', 'user_id'];
+    public $guarded_item;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->guarded_item = config('content.guarded_item');
+    }
+
 
     /**
      * @return array các attributes có thể insert image
@@ -69,6 +77,17 @@ class Content extends Model
         return ['body'];
     }
 
+    /**
+     * Là trang được bảo vệ:
+     * - không được xóa
+     * - Không được edit slug
+     *
+     * @return bool
+     */
+    public function isGuardedItem()
+    {
+        return $this->exists && isset($this->guarded_item[$this->slug]);
+    }
 
     /**
      * @param \Illuminate\Database\Query\Builder|static $query

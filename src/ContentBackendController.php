@@ -51,6 +51,9 @@ class ContentBackendController extends BackendController
                             'attr'  => 'title',
                             'title' => trans('content::common.title'),
                             'class' => 'w-lg',
+                        ],
+                        [
+                            'class' => $model->isGuardedItem() ? 'text-danger' : '',
                         ]
                     );
                 }
@@ -73,6 +76,7 @@ class ContentBackendController extends BackendController
                             'renderPreview' => 'modal-large',
                             'renderEdit'    => 'link',
                             'renderShow'    => 'link',
+                            'renderDelete'  => $model->isGuardedItem() ? 'disabled' : 'link',
                         ]
                     );
                 }
@@ -86,6 +90,7 @@ class ContentBackendController extends BackendController
      */
     public function index()
     {
+        $this->checkGuardedItem();
         $tableOptions = [
             'id'        => 'content-manage',
             'row_index' => true,
@@ -119,6 +124,7 @@ class ContentBackendController extends BackendController
      */
     public function create()
     {
+        $this->checkGuardedItem();
         $content = new Content();
         $url = route('backend.content.store');
         $method = 'post';
@@ -130,17 +136,18 @@ class ContentBackendController extends BackendController
                 '#'                            => trans('common.create'),
             ]
         );
-        return view('content::backend.form',compact('content', 'url', 'method'));
+        return view('content::backend.form', compact('content', 'url', 'method'));
     }
 
     /**
      * @param \Minhbang\LaravelContent\ContentRequest $request
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(ContentRequest $request)
     {
         $content = new Content();
-        $content->fill($request->all());
+        $content->fill($request->except('user_id'));
         $content->user_id = user('id');
         $content->save();
         Session::flash(
@@ -155,6 +162,7 @@ class ContentBackendController extends BackendController
 
     /**
      * @param \Minhbang\LaravelContent\Content $content
+     *
      * @return \Illuminate\View\View
      */
     public function show(Content $content)
@@ -172,6 +180,7 @@ class ContentBackendController extends BackendController
 
     /**
      * @param \Minhbang\LaravelContent\Content $content
+     *
      * @return \Illuminate\View\View
      */
     public function preview(Content $content)
@@ -181,6 +190,7 @@ class ContentBackendController extends BackendController
 
     /**
      * @param \Minhbang\LaravelContent\Content $content
+     *
      * @return \Illuminate\View\View
      */
     public function edit(Content $content)
@@ -195,17 +205,19 @@ class ContentBackendController extends BackendController
                 '#'                            => trans('common.edit'),
             ]
         );
-        return view('content::backend.form',compact('content', 'url', 'method'));
+        return view('content::backend.form', compact('content', 'url', 'method'));
     }
 
     /**
      * @param \Minhbang\LaravelContent\ContentRequest $request
      * @param \Minhbang\LaravelContent\Content $content
+     *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(ContentRequest $request, Content $content)
     {
-        $content->fill($request->all());
+        $except = $content->isGuardedItem() ? ['user_id', 'slug'] : ['user_id'];
+        $content->fill($request->except($except));
         $content->save();
         Session::flash(
             'message',
@@ -219,18 +231,28 @@ class ContentBackendController extends BackendController
 
     /**
      * @param \Minhbang\LaravelContent\Content $content
+     *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function destroy(Content $content)
     {
-        $content->delete();
-        return response()->json(
-            [
-                'type'    => 'success',
-                'content' => trans('common.delete_object_success', ['name' => trans('content::common.content')]),
-            ]
-        );
+        if ($content->isGuardedItem()) {
+            return response()->json(
+                [
+                    'type'    => 'error',
+                    'content' => trans('content::common.unable_delete_guarded_item'),
+                ]
+            );
+        } else {
+            $content->delete();
+            return response()->json(
+                [
+                    'type'    => 'success',
+                    'content' => trans('common.delete_object_success', ['name' => trans('content::common.content')]),
+                ]
+            );
+        }
     }
 
     /**
@@ -243,8 +265,25 @@ class ContentBackendController extends BackendController
         return [
             'title' => [
                 'rules' => 'required|max:255',
-                'label' => trans('content::common.title')
+                'label' => trans('content::common.title'),
             ],
         ];
+    }
+
+    /**
+     * Kiểm tra các guarded content, nếu chưa có thì tạo mới
+     */
+    protected function checkGuardedItem()
+    {
+        foreach ((array)config('content.guarded_item', []) as $slug => $title) {
+            if (!Content::whereSlug($slug)->count()) {
+                Content::create([
+                    'title'   => $title,
+                    'slug'    => $slug,
+                    'body'    => "Body of $title",
+                    'user_id' => user('id'),
+                ]);
+            }
+        }
     }
 }

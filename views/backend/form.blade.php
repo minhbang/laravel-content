@@ -9,34 +9,45 @@
             </div>
         </div>
         <div class="ibox-content">
-                    <div class="form-group{{ $errors->has("title") ? ' has-error':'' }}">
-                        {!! Form::label("title", trans('content::common.title'), ['class' => "control-label"]) !!}
-                        {!! Form::text("title", $content->title, ['class' => 'has-slug form-control','data-slug_target' => "#title-slug"]) !!}
-                        @if($errors->has("title"))
-                            <p class="help-block">{{ $errors->first("title") }}</p>
-                        @endif
-                    </div>
-                    <div class="form-group{{ $errors->has("slug") ? ' has-error':'' }}">
-                        {!! Form::label("slug", trans('content::common.slug'), ['class' => "control-label"]) !!}
-                        {!! Form::text("slug", $content->slug, ['id'=>"title-slug", 'class' => 'form-control']) !!}
-                        @if($errors->has("slug"))
-                            <p class="help-block">{{ $errors->first("slug") }}</p>
-                        @endif
-                    </div>
-                    <div class="form-group{{ $errors->has("body") ? ' has-error':'' }}">
-                        {!! Form::label("body", trans('content::common.body'), ['class' => "control-label"]) !!}
-                        {!! Form::textarea("body", $content->body, [
-                            'class' => 'form-control wysiwyg',
-                            'data-editor' => 'full',
-                            'data-height' => 500,
-                            'data-attribute' => 'body',
-                            'data-resource' => 'content',
-                            'data-id' => $content->id
-                        ]) !!}
-                        @if($errors->has("body"))
-                            <p class="help-block">{{ $errors->first("body") }}</p>
-                        @endif
-                    </div>
+            <div class="form-group{{ $errors->has("title") ? ' has-error':'' }}">
+                {!! Form::label("title", trans('content::common.title'), ['class' => "control-label"]) !!}
+                @if($content->isGuardedItem())
+                    {!! Form::text("title", $content->title, ['class' => 'form-control']) !!}
+                @else
+                    {!! Form::text("title", $content->title, ['class' => 'has-slug form-control','data-slug_target' => "#title-slug"]) !!}
+                @endif
+                @if($errors->has("title"))
+                    <p class="help-block">{{ $errors->first("title") }}</p>
+                @endif
+            </div>
+            @if($content->isGuardedItem())
+                <div class="form-group">
+                    {!! Form::label("slug", trans('content::common.slug'), ['class' => "control-label"]) !!}
+                    <div class="form-control text-danger">{{$content->slug}}</div>
+                </div>
+            @else
+                <div class="form-group{{ $errors->has("slug") ? ' has-error':'' }}">
+                    {!! Form::label("slug", trans('content::common.slug'), ['class' => "control-label"]) !!}
+                    {!! Form::text("slug", $content->slug, ['id'=>"title-slug", 'class' => 'form-control']) !!}
+                    @if($errors->has("slug"))
+                        <p class="help-block">{{ $errors->first("slug") }}</p>
+                    @endif
+                </div>
+            @endif
+            <div class="form-group{{ $errors->has("body") ? ' has-error':'' }}">
+                {!! Form::label("body", trans('content::common.body'), ['class' => "control-label"]) !!}
+                {!! Form::textarea("body", $content->body, [
+                    'class' => 'form-control wysiwyg',
+                    'data-editor' => 'full',
+                    'data-height' => 500,
+                    'data-attribute' => 'body',
+                    'data-resource' => 'content',
+                    'data-id' => $content->id
+                ]) !!}
+                @if($errors->has("body"))
+                    <p class="help-block">{{ $errors->first("body") }}</p>
+                @endif
+            </div>
         </div>
     </div>
 
