@@ -13,7 +13,7 @@ class ContentRequest extends Request
     public $trans_prefix = 'content::common';
     public $rules = [
         'title'       => 'required|max:255',
-        'slug'        => 'required|max:255|alpha_dash|unique:contents',
+        'slug'        => 'max:255|alpha_dash|unique:contents',
         'body'        => 'required',
     ];
 
@@ -38,8 +38,12 @@ class ContentRequest extends Request
         if ($content = $this->route('content')) {
             // update
             $this->rules['slug'] .= ',slug,' . $content->id;
+            if(!$content->isGuardedItem()){
+                $this->rules['slug'] .= '|required';
+            }
         } else {
             // create
+            $this->rules['slug'] .= '|required';
         }
         return $this->rules;
     }
