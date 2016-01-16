@@ -20,7 +20,8 @@ class CreateContentsTable extends Migration {
 			$table->longText('body');
 			$table->integer('hit')->unsigned()->default(0);
 			$table->integer('user_id')->unsigned();
-			$table->timestamps();
+			$table->timestamp('created_at')->useCurrent();
+    	$table->timestamp('updated_at')->useCurrent();
 		});
 	}
 

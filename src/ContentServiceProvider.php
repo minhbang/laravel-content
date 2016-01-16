@@ -24,7 +24,7 @@ class ContentServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/content.php'             => config_path('content.php'),
                 __DIR__ . '/../database/migrations/' .
                 '2015_10_20_161102_create_contents_table.php' =>
-                    database_path('migrations/' . '2015_10_20_161102_create_contents_table.php'),
+                    database_path('migrations/2015_10_20_161102_create_contents_table.php'),
             ]
         );
 
