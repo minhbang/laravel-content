@@ -1,14 +1,10 @@
 <?php
-namespace Minhbang\LaravelContent;
+namespace Minhbang\Content;
 
-use Minhbang\LaravelKit\Extensions\Request;
+use Minhbang\Kit\Extensions\Request as BaseRequest;
 
-/**
- * Class ContentRequest
- *
- * @package Minhbang\LaravelContent
- */
-class ContentRequest extends Request
+
+class Request extends BaseRequest
 {
     public $trans_prefix = 'content::common';
     public $rules = [
@@ -34,7 +30,7 @@ class ContentRequest extends Request
      */
     public function rules()
     {
-        /** @var \Minhbang\LaravelContent\Content $content */
+        /** @var \Minhbang\Content\Content $content */
         if ($content = $this->route('content')) {
             // update
             $this->rules['slug'] .= ',slug,' . $content->id;

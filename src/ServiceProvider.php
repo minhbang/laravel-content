@@ -1,16 +1,17 @@
 <?php
 
-namespace Minhbang\LaravelContent;
+namespace Minhbang\Content;
 
 use Illuminate\Routing\Router;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
-class ContentServiceProvider extends ServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
     /**
      * Perform post-registration booting of services.
      *
      * @param \Illuminate\Routing\Router $router
+     *
      * @return void
      */
     public function boot(Router $router)
@@ -19,13 +20,17 @@ class ContentServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../views', 'content');
         $this->publishes(
             [
-                __DIR__ . '/../views'                           => base_path('resources/views/vendor/content'),
-                __DIR__ . '/../lang'                            => base_path('resources/lang/vendor/content'),
-                __DIR__ . '/../config/content.php'             => config_path('content.php'),
-                __DIR__ . '/../database/migrations/' .
-                '2015_10_20_161102_create_contents_table.php' =>
-                    database_path('migrations/2015_10_20_161102_create_contents_table.php'),
+                __DIR__ . '/../views'              => base_path('resources/views/vendor/content'),
+                __DIR__ . '/../lang'               => base_path('resources/lang/vendor/content'),
+                __DIR__ . '/../config/content.php' => config_path('content.php'),
             ]
+        );
+        $this->publishes(
+            [
+                __DIR__ . '/../database/migrations/2015_10_20_161102_create_contents_table.php' =>
+                    database_path('migrations/2015_10_20_161102_create_contents_table.php'),
+            ],
+            'db'
         );
 
         if (config('content.add_route') && !$this->app->routesAreCached()) {
@@ -34,7 +39,7 @@ class ContentServiceProvider extends ServiceProvider
         // pattern filters
         $router->pattern('content', '[0-9]+');
         // model bindings
-        $router->model('content', 'Minhbang\LaravelContent\Content');
+        $router->model('content', 'Minhbang\Content\Content');
     }
 
     /**

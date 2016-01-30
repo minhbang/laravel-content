@@ -1,15 +1,15 @@
 <?php
-namespace Minhbang\LaravelContent;
+namespace Minhbang\Content;
 
-use Minhbang\LaravelKit\Extensions\Controller;
+use Minhbang\Kit\Extensions\Controller;
 
-class ContentFrontendController extends Controller
+/**
+ * Class FrontendController
+ *
+ * @package Minhbang\Content
+ */
+class FrontendController extends Controller
 {
-    public function __construct()
-    {
-        parent::__construct(config('content.middlewares.frontend'));
-    }
-
     /**
      * @param string $slug
      * @return \Illuminate\View\View

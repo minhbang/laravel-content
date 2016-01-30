@@ -1,24 +1,15 @@
 <?php
-namespace Minhbang\LaravelContent;
+namespace Minhbang\Content;
 
-use Minhbang\LaravelKit\Extensions\BackendController;
-use Minhbang\LaravelKit\Traits\Controller\QuickUpdateActions;
-use Request;
+use Minhbang\Kit\Extensions\BackendController as BaseController;
+use Minhbang\Kit\Traits\Controller\QuickUpdateActions;
 use Datatable;
 use Session;
 use Html;
 
-class ContentBackendController extends BackendController
+class BackendController extends BaseController
 {
     use QuickUpdateActions;
-
-    /**
-     * ContentBackendController constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct(config('content.middlewares.backend'));
-    }
 
     /**
      * Danh sách Content theo định dạng của Datatables.
@@ -27,9 +18,9 @@ class ContentBackendController extends BackendController
      */
     public function data()
     {
-        /** @var \Minhbang\LaravelContent\Content $query */
+        /** @var \Minhbang\Content\Content $query */
         $query = Content::queryDefault()->withAuthor()->orderUpdated();
-        if (Request::has('search_form')) {
+        if (\Request::has('search_form')) {
             $query = $query
                 ->searchWhereBetween('contents.created_at', 'mb_date_vn2mysql')
                 ->searchWhereBetween('contents.updated_at', 'mb_date_vn2mysql');
@@ -68,8 +59,8 @@ class ContentBackendController extends BackendController
                 'actions',
                 function (Content $model) {
                     return Html::tableActions(
-                        'backend/content',
-                        $model->id,
+                        'backend.content',
+                        ['content' => $model->id],
                         $model->title,
                         trans('content::common.content'),
                         [
@@ -140,11 +131,11 @@ class ContentBackendController extends BackendController
     }
 
     /**
-     * @param \Minhbang\LaravelContent\ContentRequest $request
+     * @param \Minhbang\Content\Request $request
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(ContentRequest $request)
+    public function store(Request $request)
     {
         $content = new Content();
         $content->fill($request->except('user_id'));
@@ -161,7 +152,7 @@ class ContentBackendController extends BackendController
     }
 
     /**
-     * @param \Minhbang\LaravelContent\Content $content
+     * @param \Minhbang\Content\Content $content
      *
      * @return \Illuminate\View\View
      */
@@ -179,7 +170,7 @@ class ContentBackendController extends BackendController
     }
 
     /**
-     * @param \Minhbang\LaravelContent\Content $content
+     * @param \Minhbang\Content\Content $content
      *
      * @return \Illuminate\View\View
      */
@@ -189,7 +180,7 @@ class ContentBackendController extends BackendController
     }
 
     /**
-     * @param \Minhbang\LaravelContent\Content $content
+     * @param \Minhbang\Content\Content $content
      *
      * @return \Illuminate\View\View
      */
@@ -209,12 +200,12 @@ class ContentBackendController extends BackendController
     }
 
     /**
-     * @param \Minhbang\LaravelContent\ContentRequest $request
-     * @param \Minhbang\LaravelContent\Content $content
+     * @param \Minhbang\Content\Request $request
+     * @param \Minhbang\Content\Content $content
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function update(ContentRequest $request, Content $content)
+    public function update(Request $request, Content $content)
     {
         $except = $content->isGuardedItem() ? ['user_id', 'slug'] : ['user_id'];
         $content->fill($request->except($except));
@@ -230,7 +221,7 @@ class ContentBackendController extends BackendController
     }
 
     /**
-     * @param \Minhbang\LaravelContent\Content $content
+     * @param \Minhbang\Content\Content $content
      *
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception

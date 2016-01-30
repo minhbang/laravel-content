@@ -1,11 +1,11 @@
 <?php
-namespace Minhbang\LaravelContent;
+namespace Minhbang\Content;
 
-use Laracasts\Presenter\Presenter;
 use Html;
-use Minhbang\LaravelKit\Traits\Presenter\DatetimePresenter;
+use Laracasts\Presenter\Presenter as BasePresenter;
+use Minhbang\Kit\Traits\Presenter\DatetimePresenter;
 
-class ContentPresenter extends Presenter
+class Presenter extends BasePresenter
 {
     use DatetimePresenter;
 

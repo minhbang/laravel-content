@@ -3,15 +3,15 @@ return [
     /**
      * Tự động add các route
      */
-    'add_route'   => true,
+    'add_route'    => true,
     /**
      * Khai báo middlewares cho các Controller
      */
-    'middlewares' => [
+    'middlewares'  => [
         'frontend' => null,
-        'backend'  => 'admin',
+        'backend'  => 'role:admin',
     ],
-    'guarded_item'     => [
+    'guarded_item' => [
         'contact-us'       => 'Liên hệ',
         'terms-conditions' => 'Điều khoản & Điều kiện',
         'order-success'    => 'Đặt hàng thành công',
