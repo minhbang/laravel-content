@@ -16,10 +16,9 @@ class FrontendController extends Controller
      */
     public function show($slug)
     {
-        if (is_null($content = Content::findBy('slug', $slug))) {
+        if (is_null($content = Content::findByFallbackSlug($slug))) {
             abort(404, trans('content::common.not_found'));
         }
-
         return view('content::frontend.show', compact('content'));
     }
 

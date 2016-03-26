@@ -1,17 +1,22 @@
 <?php
 namespace Minhbang\Content;
 
-use Minhbang\Kit\Extensions\Request as BaseRequest;
+use Minhbang\Locale\TranslatableRequest;
 
-
-class Request extends BaseRequest
+/**
+ * Class Request
+ *
+ * @package Minhbang\Content
+ */
+class Request extends TranslatableRequest
 {
     public $trans_prefix = 'content::common';
     public $rules = [
-        'title'       => 'required|max:255',
-        'slug'        => 'max:255|alpha_dash|unique:contents',
-        'body'        => 'required',
+        'title' => 'required|max:255',
+        'slug'  => 'max:255|alpha_dash',
+        'body'  => 'required',
     ];
+    public $translatable = ['title', 'slug', 'body'];
 
     /**
      * Get the validation rules that apply to the request.
@@ -22,15 +27,14 @@ class Request extends BaseRequest
     {
         /** @var \Minhbang\Content\Content $content */
         if ($content = $this->route('content')) {
-            // update
-            $this->rules['slug'] .= ',slug,' . $content->id;
-            if(!$content->isGuardedItem()){
+            //update Content
+            if (!$content->isGuardedItem()) {
                 $this->rules['slug'] .= '|required';
             }
         } else {
-            // create
-            $this->rules['slug'] .= '|required';
+            // create Content
         }
+
         return $this->rules;
     }
 

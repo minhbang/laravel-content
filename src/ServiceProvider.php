@@ -29,6 +29,8 @@ class ServiceProvider extends BaseServiceProvider
             [
                 __DIR__ . '/../database/migrations/2015_10_20_161102_create_contents_table.php' =>
                     database_path('migrations/2015_10_20_161102_create_contents_table.php'),
+                __DIR__ . '/../database/migrations/2015_10_20_171102_create_content_translations_table.php' =>
+                    database_path('migrations/2015_10_20_171102_create_content_translations_table.php'),
             ],
             'db'
         );

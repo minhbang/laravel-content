@@ -6,7 +6,13 @@ use Minhbang\Kit\Traits\Controller\QuickUpdateActions;
 use Datatable;
 use Session;
 use Html;
+use LocaleManager;
 
+/**
+ * Class BackendController
+ *
+ * @package Minhbang\Content
+ */
 class BackendController extends BaseController
 {
     use QuickUpdateActions;
@@ -25,6 +31,7 @@ class BackendController extends BaseController
                 ->searchWhereBetween('contents.created_at', 'mb_date_vn2mysql')
                 ->searchWhereBetween('contents.updated_at', 'mb_date_vn2mysql');
         }
+
         return Datatable::query($query)
             ->addColumn(
                 'index',
@@ -81,7 +88,7 @@ class BackendController extends BaseController
      */
     public function index()
     {
-        $this->checkGuardedItem();
+        Content::checkGuardedItems();
         $tableOptions = [
             'id'        => 'content-manage',
             'row_index' => true,
@@ -106,6 +113,7 @@ class BackendController extends BaseController
             'fa-newspaper-o',
             ['#' => trans('content::common.content')]
         );
+
         return view('content::backend.index', compact('tableOptions', 'options', 'table'));
     }
 
@@ -115,7 +123,7 @@ class BackendController extends BaseController
      */
     public function create()
     {
-        $this->checkGuardedItem();
+        Content::checkGuardedItems();
         $content = new Content();
         $url = route('backend.content.store');
         $method = 'post';
@@ -127,7 +135,8 @@ class BackendController extends BaseController
                 '#'                            => trans('common.create'),
             ]
         );
-        return view('content::backend.form', compact('content', 'url', 'method'));
+
+        return view('content::backend.form', compact('content', 'url', 'method') + LocaleManager::compact());
     }
 
     /**
@@ -148,6 +157,7 @@ class BackendController extends BaseController
                 'content' => trans('common.create_object_success', ['name' => trans('content::common.content')]),
             ]
         );
+
         return redirect(route('backend.content.index'));
     }
 
@@ -166,7 +176,8 @@ class BackendController extends BaseController
                 '#'                            => trans('common.view_detail'),
             ]
         );
-        return view('content::backend.show', compact('content'));
+
+        return view('content::backend.show', compact('content') + LocaleManager::compact());
     }
 
     /**
@@ -196,7 +207,8 @@ class BackendController extends BaseController
                 '#'                            => trans('common.edit'),
             ]
         );
-        return view('content::backend.form', compact('content', 'url', 'method'));
+
+        return view('content::backend.form', compact('content', 'url', 'method') + LocaleManager::compact());
     }
 
     /**
@@ -217,6 +229,7 @@ class BackendController extends BaseController
                 'content' => trans('common.update_object_success', ['name' => trans('content::common.content')]),
             ]
         );
+
         return redirect(route('backend.content.index'));
     }
 
@@ -237,6 +250,7 @@ class BackendController extends BaseController
             );
         } else {
             $content->delete();
+
             return response()->json(
                 [
                     'type'    => 'success',
@@ -259,22 +273,5 @@ class BackendController extends BaseController
                 'label' => trans('content::common.title'),
             ],
         ];
-    }
-
-    /**
-     * Kiểm tra các guarded content, nếu chưa có thì tạo mới
-     */
-    protected function checkGuardedItem()
-    {
-        foreach ((array)config('content.guarded_item', []) as $slug => $title) {
-            if (!Content::whereSlug($slug)->count()) {
-                Content::create([
-                    'title'   => $title,
-                    'slug'    => $slug,
-                    'body'    => "Body of $title",
-                    'user_id' => user('id'),
-                ]);
-            }
-        }
     }
 }
