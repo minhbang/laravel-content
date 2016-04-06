@@ -3,7 +3,7 @@
 namespace Minhbang\Content;
 
 use Illuminate\Routing\Router;
-use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Minhbang\Kit\Extensions\BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -34,10 +34,9 @@ class ServiceProvider extends BaseServiceProvider
             ],
             'db'
         );
-
-        if (config('content.add_route') && !$this->app->routesAreCached()) {
-            require __DIR__ . '/routes.php';
-        }
+        
+        $this->mapWebRoutes($router, __DIR__ . '/routes.php', config('content.add_route'));
+        
         // pattern filters
         $router->pattern('content', '[0-9]+');
         // model bindings
