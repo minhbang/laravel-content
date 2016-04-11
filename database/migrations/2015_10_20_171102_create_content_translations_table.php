@@ -23,7 +23,6 @@ class CreateContentTranslationsTable extends Migration
             $table->integer('content_id')->unsigned();
             $table->string('locale', '10')->index();
             $table->unique(['content_id', 'locale']);
-            $table->unique(['slug', 'locale']);
             $table->foreign('content_id')->references('id')->on('contents')->onDelete('cascade');
         });
     }
