@@ -136,7 +136,8 @@ class Content extends Model
      */
     public function scopeSlug($query, $slug, $locale = null)
     {
-        return $this->scopeWhereTranslation($query, 'slug', $slug, $locale);
+        return $query->leftJoin('content_translations', 'content_translations.content_id', '=', "{$this->table}.id")
+            ->where('slug', $slug)->where('locale', LocaleManager::getLocale($locale));
     }
 
     /**
@@ -157,7 +158,6 @@ class Content extends Model
      */
     public static function findByFallbackSlug($slug)
     {
-
         return static::slug($slug, LocaleManager::getFallback())->first();
     }
 

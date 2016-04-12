@@ -14,8 +14,8 @@ return [
     'guarded_item' => [
         'contact-us'       => 'Liên hệ',
         'terms-conditions' => 'Điều khoản & Điều kiện',
-        'payment_canceled' => 'Đơn hàng đã hủy',
-        'payment_failed'   => 'Thanh toán đơn hàng bị lỗi',
-        'payment_success'  => 'Thanh toán Đơn hàng thành công',
+        'payment-canceled' => 'Đơn hàng đã hủy',
+        'payment-failed'   => 'Thanh toán đơn hàng bị lỗi',
+        'payment-success'  => 'Thanh toán Đơn hàng thành công',
     ],
 ];
